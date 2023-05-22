@@ -1,100 +1,91 @@
 package cards
 
-import (
-	"fmt"
-)
+import "math/rand"
 
-type Suit uint8
-
-const (
-	IllegalSuit Suit = iota // zero-value should be illegal to protect against accidental values
-	Diamonds
-	Clubs
-	Hearts
-	Spades
-	NoSuit // Jokers have no suit
-)
-
-type Face uint8
-
-const (
-	IllegalFace Face = iota // zero-value is illegal
-	Ace
-	Two // face-values correspond to integer values, allowing easy calculation
-	Three
-	Four
-	Five
-	Six
-	Seven
-	Eight
-	Nine
-	Ten
-	Jack
-	Queen
-	King
-	Joker
-)
-
-type Card struct {
-	Suit
-	Face
+type Game[DECK_TYPE any] struct {
+	Deck  DECK_TYPE
+	State map[string]any
 }
 
-type CardException struct {
-	Card
+type Deck interface {
+	Shuffle(rand.Source)
+	Valid() (bool, error)
 }
 
-func NewCardException(c Card) CardException {
-	e := CardException{c}
-	return e
+type Card interface {
+	Suit() Suit
+	Face() Face
+	String() string // ex: 🂮
+	Word() string   // ex: King of Spades
+	Code() string   // ex: K♠
+	Valid() (bool, error)
+	Value() rune
 }
 
-func (c CardException) Error() string {
-	if uint8(c.Face)*uint8(c.Suit) == 0 {
-		return fmt.Sprintf("Out of bounds Face and Suit %q, %q", c.Face, c.Suit)
-	}
-	if c.Face < 1 || c.Face > Joker {
-		return fmt.Sprintf("Out of bounds Face %q", c.Face)
-	}
-	if c.Suit < 1 || c.Suit > 5 {
-		return fmt.Sprintf("Out of bounds Suit %q", c.Suit)
-	}
-	if c.Face == Joker {
-		if c.Suit != NoSuit {
-			return fmt.Sprintf("a Joker cannot be of Suit %q", c.Suit)
+type Suit interface {
+	String() string // ex: ♠
+	Value() rune
+	Word() string // ex: "Spades"
+}
+
+// note that although Face is a rune, it does not correspond to a UTF-8 char
+// because there is no visual representation of a face without a suit
+type Face interface {
+	String() // ex: "King"
+	Code()   // ex: "K"
+}
+
+/*
+func StreamCards(seed int64) chan Card {
+	//	cards drawn from randomly shuffled decks
+	ch := make(chan Card)
+	pool := make([]Card, 0, 54)
+
+	randy := NewDeterminator(seed)
+
+	go func() {
+
+		//	if we've exhausted the deck, get a new one
+		if len(pool) < 1 {
+			d := NewDeck()
+			d.Shuffle(randy)
+			randy.Tick()
+			pool = append(pool, d[:]...)
 		}
-	}
-	return "Unknown Card Error"
+		//	draw top card from deck
+		popped := pool[len(pool)-1]
+		pool = pool[:len(pool)-1]
+		ch <- popped
+
+	}()
+
+	return ch
 }
 
-func (c Card) Validate() (bool, error) {
+func StreamDecks(seed int64) chan<- Deck {
+	ch := make(chan Deck)
+	randy := NewDeterminator(seed)
 
-	return true, nil
+	go func() {
+		d := NewDeck()
+		d.Shuffle(randy)
+		randy.Tick()
+		ch <- d
+	}()
+
+	return ch
 }
 
-func (c Card) String() string {
 
+func (d *Deck) Shuffle(randy rand.Source) {
+	generator := rand.New(randy)
+	generator.Shuffle(len(d), func(i, j int) { d[i], d[j] = d[j], d[i] })
 }
 
-type Deck [56]Card
-
-// Pile is a generic type that can represent a talon, a hand, a layout, a discard pile, etc
-type Pile []Card
-
-func NewDeck() Deck {
-	d := Deck{}
-
-	i := 0
-
-	for thisSuit := Suit(1); thisSuit <= Spades; thisSuit++ {
-		for thisFace := Face(1); thisFace <= Ace; thisFace++ {
-			thisCard := Card{
-				Suit: thisSuit,
-				Face: thisFace,
-			}
-			d[i] = thisCard
-			i++
-		}
-	}
+func NewShuffledDeck(randy rand.Source) Deck {
+	d := NewDeck()
+	d.Shuffle(randy)
 	return d
 }
+
+*/
