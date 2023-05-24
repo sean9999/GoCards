@@ -1,6 +1,14 @@
 package french
 
-import "math/rand"
+import (
+	"math/rand"
+)
+
+type Cards []Card
+
+func (c Cards) Beats(d Cards) bool {
+	return c[0] > d[0]
+}
 
 func StreamCards(randy rand.Source, doneChan <-chan bool) <-chan Card {
 	//	cards drawn from randomly shuffled decks
@@ -13,12 +21,12 @@ func StreamCards(randy rand.Source, doneChan <-chan bool) <-chan Card {
 	// this is more realistic than doing pure random card choices
 	var poolPop = func() Card {
 		if len(pool) < 1 {
-			d := NewShuffledDeck(randy)
-			pool = append(pool, d[:]...)
+			pool = append(pool, NewShuffledDeck(randy).DealOut()...)
 		}
-		poppedCard := pool[len(pool)-1]
+		//	pop off the last element
+		popeye := pool[len(pool)-1]
 		pool = pool[:len(pool)-1]
-		return poppedCard
+		return popeye
 	}
 
 	go func() {
@@ -27,7 +35,7 @@ func StreamCards(randy rand.Source, doneChan <-chan bool) <-chan Card {
 			case doneVal = <-doneChan:
 				close(ch)
 			case ch <- poolPop():
-
+				//	stream out cards as fast as our receiver can take them
 			}
 		}
 	}()

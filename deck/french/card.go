@@ -14,8 +14,18 @@ func (c Card) Suit() (Suit, error) {
 	return GetSuit(c)
 }
 
-func (c Card) Face() Face {
-	return GetFace(c)
+func (c Card) Rank() Rank {
+	return GetRank(c)
+}
+
+func (c Card) Beats(d Card) bool {
+	if c.Rank() != d.Rank() {
+		return c.Rank().Beats(d.Rank())
+	} else {
+		c_suit, _ := c.Suit()
+		d_suit, _ := d.Suit()
+		return c_suit.Beats(d_suit)
+	}
 }
 
 func (c Card) String() string {
@@ -25,7 +35,7 @@ func (c Card) String() string {
 
 func (c Card) Word() string {
 	suit, _ := c.Suit()
-	return fmt.Sprintf("%s of %s", c.Face(), suit.Word())
+	return fmt.Sprintf("%s of %s", c.Rank(), suit.Word())
 }
 
 func (c Card) FallsWithin() SuitRange {

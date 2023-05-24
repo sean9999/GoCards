@@ -90,3 +90,7 @@ func GetSuit(c Card) (Suit, error) {
 	}
 	return ZeroSuit, CardException{c, "no legal suit for this card"}
 }
+
+func (s1 Suit) Beats(s2 Suit) bool {
+	return s1 > s2
+}

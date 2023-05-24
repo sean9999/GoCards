@@ -1,6 +1,8 @@
 package french
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 // Deck is a Standard 52-card deck of French-suited playing cards
 //
@@ -29,7 +31,13 @@ func NewDeck() Deck {
 	return d
 }
 
-func (d *Deck) Shuffle(randy rand.Source) {
+func (d Deck) DealOut() Stock {
+	s := make([]Card, 54)
+	copy(s, d[:])
+	return Stock(s)
+}
+
+func (d Deck) Shuffle(randy rand.Source) {
 	generator := rand.New(randy)
 	generator.Shuffle(len(d), func(i, j int) { d[i], d[j] = d[j], d[i] })
 }

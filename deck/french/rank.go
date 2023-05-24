@@ -2,15 +2,15 @@ package french
 
 import "fmt"
 
-func LookupFace(n Face) (string, error) {
-	word, exists := faceMap[Face(n)]
+func LookupRank(n Rank) (string, error) {
+	word, exists := rankMap[Rank(n)]
 	if exists {
 		return word, nil
 	}
 	return "IllegalValue", fmt.Errorf("illegal Face value %q", n)
 }
 
-var faceMap = map[Face]string{
+var rankMap = map[Rank]string{
 	Ace:    "Ace",
 	Two:    "Two",
 	Three:  "Three",
@@ -28,11 +28,12 @@ var faceMap = map[Face]string{
 	Joker:  "Joker",
 }
 
-// Face is an offset from [SuitRange.LowerBound]
-type Face rune
+// Rank is an offset from [SuitRange.LowerBound]
+// we purposely do not make it a rune, because it alone does not represent a UTF-8 char
+type Rank uint8
 
 const (
-	Ace Face = iota
+	Ace Rank = iota
 	Two
 	Three
 	Four
@@ -49,12 +50,16 @@ const (
 	Joker
 )
 
-func (f Face) String() string {
-	name, _ := LookupFace(f)
+func (f Rank) String() string {
+	name, _ := LookupRank(f)
 	return name
 }
 
-func GetFace(c Card) Face {
+func GetRank(c Card) Rank {
 	//	nice optimisation
-	return Face(c%16 - 1)
+	return Rank(c%16 - 1)
+}
+
+func (r Rank) Beats(q Rank) bool {
+	return r > q
 }
