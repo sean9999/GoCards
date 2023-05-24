@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	french "github.com/sean9999/GoCards/french" // french-suited standard deck
+	french "github.com/sean9999/GoCards/deck/french" // french-suited standard deck
 )
 
 var ErrTooFewCards = errors.New("not enough cards in stock")
