@@ -33,6 +33,14 @@ func (s Suit) Range() SuitRange {
 	return LegalSuitRanges[s]
 }
 
+func (s Suit) Validate() (bool, error) {
+	_, ok := LegalSuitRanges[s]
+	if !ok {
+		return false, fmt.Errorf("suit %q out of range", s)
+	}
+	return true, nil
+}
+
 func (s Suit) Word() string {
 	switch s {
 	case Diamonds:

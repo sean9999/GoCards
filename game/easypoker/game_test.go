@@ -187,6 +187,36 @@ func TestNewGame(t *testing.T) {
 				alice := &player_1
 				assertScalarEquals[*easypoker.Player](t, winningHand.Player, alice)
 			})
+
+			thirdRoundLosingHand := "🃝🂫🂵🃘🃒"
+			t.Run("losing hand is "+thirdRoundLosingHand, func(t *testing.T) {
+				var losingHand easypoker.Hand
+				if round.Hands[0].Player == round.WinningHand.Player {
+					losingHand = round.Hands[1]
+				} else {
+					losingHand = round.Hands[0]
+				}
+				want, _ := easypoker.Strand(thirdRoundLosingHand)
+				got := losingHand.Cards
+				equal, err := cardsAreEqual(t, got, want)
+				if !equal {
+					t.Error(err)
+				}
+			})
+
+			thirdRoundWinningHand := "🂸🂧🃖🂴🃚"
+			t.Run("winning hand is "+thirdRoundWinningHand, func(t *testing.T) {
+				want, err := easypoker.Strand(thirdRoundWinningHand)
+				if err != nil {
+					t.Error(err)
+				}
+				got := round.WinningHand.Cards
+				equal, err := cardsAreEqual(t, got, want)
+				if !equal {
+					t.Error(err)
+				}
+			})
+
 			t.Run("22 cards left in stock", func(t *testing.T) {
 				assertScalarEquals[int](t, len(g.Stock), 22)
 			})

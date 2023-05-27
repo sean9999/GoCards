@@ -18,16 +18,6 @@ func (c Card) Rank() Rank {
 	return GetRank(c)
 }
 
-func (c Card) Beats(d Card) bool {
-	if c.Rank() != d.Rank() {
-		return c.Rank().Beats(d.Rank())
-	} else {
-		c_suit, _ := c.Suit()
-		d_suit, _ := d.Suit()
-		return c_suit.Beats(d_suit)
-	}
-}
-
 func (c Card) String() string {
 	buf := utf8.AppendRune(nil, rune(c))
 	return string(buf)

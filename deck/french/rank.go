@@ -59,7 +59,3 @@ func GetRank(c Card) Rank {
 	//	nice optimisation
 	return Rank(c%16 - 1)
 }
-
-func (r Rank) Beats(q Rank) bool {
-	return r > q
-}
