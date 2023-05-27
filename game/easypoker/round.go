@@ -40,7 +40,7 @@ func (g *Game) NewRound(players ...*Player) (*Round, error) {
 
 // plays the round and returns the winning hand
 func (r *Round) Play() Hand {
-	//	naive play. the first hand wins
+
 	wHand := r.Hands[0]
 	r.WinningHand = &wHand
 	return wHand
