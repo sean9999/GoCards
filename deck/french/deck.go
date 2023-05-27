@@ -10,8 +10,19 @@ import (
 type Deck [54]Card
 
 func NewDeck() Deck {
-	var pile []Card
-	for thisSuit, thisSuitRange := range LegalSuitRanges {
+	pile := make([]Card, 0, 54)
+	//	insert from lowest to highest
+	orderedSuits := []Suit{
+		Spades,
+		Hearts,
+		Diamonds,
+		Clubs,
+		Black, // Joker
+		Red,   // Joker
+		White, // Joker
+	}
+	for _, thisSuit := range orderedSuits {
+		thisSuitRange := LegalSuitRanges[thisSuit]
 		for cardValue := thisSuitRange.LowerBound; cardValue <= thisSuitRange.UpperBound; cardValue++ {
 			switch thisSuit {
 			case Clubs, Hearts, Spades, Diamonds:
@@ -31,13 +42,7 @@ func NewDeck() Deck {
 	return d
 }
 
-func (d Deck) DealOut() Stock {
-	s := make([]Card, 54)
-	copy(s, d[:])
-	return Stock(s)
-}
-
-func (d Deck) Shuffle(randy rand.Source) {
+func (d *Deck) Shuffle(randy rand.Source) {
 	generator := rand.New(randy)
 	generator.Shuffle(len(d), func(i, j int) { d[i], d[j] = d[j], d[i] })
 }
@@ -46,4 +51,11 @@ func NewShuffledDeck(randy rand.Source) Deck {
 	d := NewDeck()
 	d.Shuffle(randy)
 	return d
+}
+
+// a Deck can DealOut a Stock. The Stock can then be used in play
+func (d Deck) DealOut() Stock {
+	s := make([]Card, 54)
+	copy(s, d[:])
+	return Stock(s)
 }

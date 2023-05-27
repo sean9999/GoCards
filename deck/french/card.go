@@ -61,6 +61,11 @@ func (c Card) Validate() (bool, error) {
 		return false, err
 	}
 	offset := c - suit.Range().LowerBound
+	// King is the highest value because that's where it sits in the UTF-8 table.
+	// This is not a judgement on what card is worth more in a particular game
+	// which games implement using the `Card.Beats(Card) bool` method
+	// This method only determines the card is in the right range of values according to:
+	// https://www.unicode.org/charts/PDF/U1F0A0.pdf
 	if offset > Card(King) {
 		return false, CardException{c, fmt.Sprintf("invalid face value %q. Highest legal value is %q", offset, King)}
 	}
@@ -68,8 +73,19 @@ func (c Card) Validate() (bool, error) {
 	return true, nil
 }
 
-/*
-func CreateCard(s Suit, f Face) {
-	c := Card{s, f}
+func NewCard(s Suit, r Rank) Card {
+	val := rune(s.Range().LowerBound) + rune(r)
+	return Card(val)
 }
-*/
+
+func CardFromChar(char string) (Card, error) {
+	runeSlice := []rune(char)
+	if len(runeSlice) != 1 {
+		return ZeroCard, CardException{
+			ZeroCard,
+			fmt.Sprintf("runeSlice of length 1 expected. got %d", len(runeSlice)),
+		}
+	}
+	val := runeSlice[0]
+	return Card(val), nil
+}

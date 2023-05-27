@@ -52,6 +52,7 @@ type Hand interface {
 // it's conceptually similar to a stock, but we require a different set of methods
 // Cards.Beats evaluates groups of cards and decides which is the better hand.
 // It can compare Cards ([]Card) of different lengths
+// ie: does an Ace of Spades beat two threes? Does an Ace of Hearts beat a 5 and a 7?
 type Cards interface {
 	Beats(Cards) bool
 	Cards() []Card

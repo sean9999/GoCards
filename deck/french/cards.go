@@ -6,9 +6,11 @@ import (
 
 type Cards []Card
 
+/*
 func (c Cards) Beats(d Cards) bool {
 	return c[0] > d[0]
 }
+*/
 
 func StreamCards(randy rand.Source, doneChan <-chan bool) <-chan Card {
 	//	cards drawn from randomly shuffled decks

@@ -4,8 +4,8 @@ type Player struct {
 	Name string
 }
 
-func NewPlayer(name string) Player {
+func NewPlayer(Name string) Player {
 	return Player{
-		Name: name,
+		Name,
 	}
 }
