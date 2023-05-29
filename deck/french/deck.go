@@ -13,10 +13,10 @@ func NewDeck() Deck {
 	pile := make([]Card, 0, 54)
 	//	insert from lowest to highest
 	orderedSuits := []Suit{
-		Spades,
-		Hearts,
-		Diamonds,
 		Clubs,
+		Diamonds,
+		Hearts,
+		Spades,
 		Black, // Joker
 		Red,   // Joker
 		White, // Joker
@@ -27,7 +27,8 @@ func NewDeck() Deck {
 			switch thisSuit {
 			case Clubs, Hearts, Spades, Diamonds:
 				//	Regular cards
-				if cardValue-thisSuitRange.LowerBound != Card(Knight) {
+				// @todo: add one or subtract one here
+				if cardValue-thisSuitRange.Floor() != Card(Knight) {
 					//	There is no knight in a french deck
 					pile = append(pile, cardValue)
 				}

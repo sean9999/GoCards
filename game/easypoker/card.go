@@ -8,6 +8,8 @@ import (
 
 type Card french.Card
 
+var ZeroCard Card = Card(french.ZeroCard)
+
 func (c Card) Suit() (Suit, error) {
 	return GetSuit(c)
 }
@@ -19,7 +21,7 @@ func (c Card) String() string {
 
 // ConstructCard constructs a card from well-known suit and rank values from the [french] deck
 func ConstructCard(s french.Suit, r french.Rank) Card {
-	val := rune(s.Range().LowerBound) + rune(r)
+	val := rune(s.Range().Floor()) + rune(r)
 	return Card(val)
 }
 

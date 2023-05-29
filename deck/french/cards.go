@@ -2,15 +2,23 @@ package french
 
 import (
 	"math/rand"
+	"strings"
 )
 
 type Cards []Card
 
-/*
-func (c Cards) Beats(d Cards) bool {
-	return c[0] > d[0]
+func (cs Cards) Strand() string {
+	r := ""
+	for _, c := range cs {
+		r += c.String() + " "
+	}
+	return r
 }
-*/
+
+func Strand(longString string) (Cards, error) {
+	chars := strings.Split(longString, "")
+	return ConstructHandFromChars(chars)
+}
 
 func StreamCards(randy rand.Source, doneChan <-chan bool) <-chan Card {
 	//	cards drawn from randomly shuffled decks
@@ -43,4 +51,19 @@ func StreamCards(randy rand.Source, doneChan <-chan bool) <-chan Card {
 	}()
 
 	return ch
+}
+
+func ConstructHandFromChars(chars []string) (Cards, error) {
+	cards := make([]Card, 0, len(chars))
+	for _, char := range chars {
+		if char != " " {
+			thisFrenchCard, err := CardFromChar(char)
+			if err != nil {
+				return nil, err
+			} else {
+				cards = append(cards, thisFrenchCard)
+			}
+		}
+	}
+	return Cards(cards), nil
 }

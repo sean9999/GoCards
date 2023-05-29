@@ -13,6 +13,13 @@ type SuitRange struct {
 	UpperBound Card // inclusive
 }
 
+// Floor represents the _exclusive_ lower-bound
+// useful in preventing akward off-by-one errors
+// when combining Suit and Rank values to calculate Card's underlying rune value
+func (sr SuitRange) Floor() Card {
+	return sr.LowerBound - 1
+}
+
 const (
 	ZeroSuit Suit = 0 // should be illegal
 	Diamonds Suit = 0x2666

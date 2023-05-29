@@ -1,21 +1,16 @@
 package french
 
+import "fmt"
+
 type Stock []Card
 
-func (p *Stock) Draw(n int) Cards {
+func (p *Stock) Draw(n int) (Cards, error) {
 	s := *p
-	chop := len(s) - n
-	tail := s[chop:]
-	//	chop tail off
-	head := s[:chop]
-	*p = head
-	return Cards(tail)
+	if n > len(s) {
+		return nil, fmt.Errorf("too few cards in stock")
+	}
+	tail := s[n:]
+	head := s[:n]
+	*p = tail
+	return Cards(head), nil
 }
-
-/*
-func (c Stock) Cards() []Card {
-	r := make([]Card, len(c))
-	copy(r, c)
-	return r
-}
-*/

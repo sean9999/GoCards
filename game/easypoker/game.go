@@ -61,6 +61,8 @@ func NewGame(randy rand.Source) Game {
 	return g
 }
 
+// NewDeterministicGame operates using an unshuffled deck
+// [NewGame] can also be deterministic by passing in a known value as [rand.Source]
 func NewDeterministicGame() Game {
 	deck := french.NewDeck()
 	stock := make([]Card, 0, 52)

@@ -39,8 +39,6 @@ func cardsAreEqual(t *testing.T, got, want []easypoker.Card) (bool, error) {
 
 func TestNewGame(t *testing.T) {
 
-	//	let's try a helper in scope so we don't need to pass *testing.T
-
 	t.Run("new game, seed value 0", func(t *testing.T) {
 
 		//	deterministic game
@@ -140,14 +138,14 @@ func TestNewGame(t *testing.T) {
 				assertScalarEquals[int](t, len(g.Stock), 32)
 			})
 
-			t.Run("losing hand is 🃕🃂🃃🂡🃄", func(t *testing.T) {
+			t.Run("losing hand is 🂥🂲🂳🃑🂴", func(t *testing.T) {
 				var losingHand easypoker.Hand
 				if round.Hands[0].Player == round.WinningHand.Player {
 					losingHand = round.Hands[1]
 				} else {
 					losingHand = round.Hands[0]
 				}
-				want, _ := easypoker.Strand("🃕🃂🃃🂡🃄")
+				want, _ := easypoker.Strand("🂥🂲🂳🃑🂴")
 				got := losingHand.Cards
 				equal, err := cardsAreEqual(t, got, want)
 				if !equal {
@@ -155,8 +153,8 @@ func TestNewGame(t *testing.T) {
 				}
 			})
 
-			t.Run("winning hand is 🃙🂽🂭🃊🃎", func(t *testing.T) {
-				want, err := easypoker.Strand("🃙🂽🂭🃊🃎")
+			t.Run("winning hand is 🂩🃍🃝🂺🂾", func(t *testing.T) {
+				want, err := easypoker.Strand("🂩🃍🃝🂺🂾")
 				if err != nil {
 					t.Error(err)
 				}
@@ -188,7 +186,7 @@ func TestNewGame(t *testing.T) {
 				assertScalarEquals[*easypoker.Player](t, winningHand.Player, alice)
 			})
 
-			thirdRoundLosingHand := "🃝🂫🂵🃘🃒"
+			thirdRoundLosingHand := "🂭🃛🃅🂨🂢"
 			t.Run("losing hand is "+thirdRoundLosingHand, func(t *testing.T) {
 				var losingHand easypoker.Hand
 				if round.Hands[0].Player == round.WinningHand.Player {
@@ -204,7 +202,7 @@ func TestNewGame(t *testing.T) {
 				}
 			})
 
-			thirdRoundWinningHand := "🂸🂧🃖🂴🃚"
+			thirdRoundWinningHand := "🃈🃗🂦🃄🂪"
 			t.Run("winning hand is "+thirdRoundWinningHand, func(t *testing.T) {
 				want, err := easypoker.Strand(thirdRoundWinningHand)
 				if err != nil {

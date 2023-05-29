@@ -33,7 +33,8 @@ var rankMap = map[Rank]string{
 type Rank uint8
 
 const (
-	Ace Rank = iota
+	ZeroRank Rank = iota
+	Ace
 	Two
 	Three
 	Four
@@ -57,5 +58,5 @@ func (f Rank) String() string {
 
 func GetRank(c Card) Rank {
 	//	nice optimisation
-	return Rank(c%16 - 1)
+	return Rank(c % 16)
 }
