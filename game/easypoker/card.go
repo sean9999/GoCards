@@ -34,8 +34,11 @@ func CardFromRune(v rune) Card {
 // the difference is that that easypoker has rules on what card outranks another (ie: aces high)
 // or what group of cards (ie: hand) beats another. (ie: full-house beats a pair)
 // or what cards are legal (jokers not permitted)
-func CardFromFrench(f french.Card) Card {
-	return Card(f)
+func CardFromFrench(f french.Card) (Card, error) {
+	if f.Rank() == french.Joker {
+		return ZeroCard, fmt.Errorf("EasyPoker has no Jokers")
+	}
+	return Card(f), nil
 }
 
 func (c Card) Validate() (bool, error) {

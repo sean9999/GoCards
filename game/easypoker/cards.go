@@ -1,6 +1,11 @@
 package easypoker
 
-import "sort"
+import (
+	"fmt"
+	"sort"
+
+	"github.com/sean9999/GoCards/deck/french"
+)
 
 // Cards is a distinct datatype, because we need to compare groups of cards
 // in a different way than we compare individual ones
@@ -37,4 +42,16 @@ func (cards Cards) HighCard() Card {
 		}
 	}
 	return r
+}
+
+func CardsFromFrench(fs french.Cards) (Cards, error) {
+	r := make([]Card, 0, len(fs))
+	for _, fc := range fs {
+		c, err := CardFromFrench(fc)
+		if err != nil {
+			return r, fmt.Errorf("a joker was encountered")
+		}
+		r = append(r, c)
+	}
+	return r, nil
 }

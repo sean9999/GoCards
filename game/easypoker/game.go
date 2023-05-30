@@ -51,7 +51,8 @@ func NewGame(randy rand.Source) Game {
 	stock := make([]Card, 0, 52)
 	for _, card := range deck {
 		if card.Rank() != french.Joker {
-			stock = append(stock, CardFromFrench(card))
+			easyCard, _ := CardFromFrench(card)
+			stock = append(stock, easyCard)
 		}
 	}
 	g := Game{
@@ -68,7 +69,8 @@ func NewDeterministicGame() Game {
 	stock := make([]Card, 0, 52)
 	for _, card := range deck {
 		if card.Rank() != french.Joker {
-			stock = append(stock, CardFromFrench(card))
+			c, _ := CardFromFrench(card)
+			stock = append(stock, c)
 		}
 	}
 	g := Game{

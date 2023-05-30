@@ -41,7 +41,7 @@ func ConstructHandFromChars(chars []string) (Cards, error) {
 			if err != nil {
 				return nil, err
 			} else {
-				thisPokerCard := CardFromFrench(thisFrenchCard)
+				thisPokerCard, _ := CardFromFrench(thisFrenchCard)
 				isValid, err := thisPokerCard.Validate()
 				if !isValid {
 					return nil, err
