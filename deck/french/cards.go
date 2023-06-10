@@ -20,11 +20,15 @@ func Strand(longString string) (Cards, error) {
 	return ConstructHandFromChars(chars)
 }
 
-func StreamCards(randy rand.Source, doneChan <-chan bool) <-chan Card {
+func StreamCards(randy rand.Source) (<-chan Card, chan<- bool) {
 	//	cards drawn from randomly shuffled decks
-	ch := make(chan Card)
+	cardsChan := make(chan Card)
+	doneChan := make(chan bool)
+
+	//defer close(doneChan)
+	//defer close(cardsChan)
+
 	pool := make([]Card, 0, 54)
-	doneVal := false
 
 	// pop off the top card from a shuffled deck
 	// get a new deck if we run out
@@ -40,17 +44,21 @@ func StreamCards(randy rand.Source, doneChan <-chan bool) <-chan Card {
 	}
 
 	go func() {
+		doneVal := false
+		defer close(doneChan)
+		defer close(cardsChan)
+
 		for !doneVal {
 			select {
-			case doneVal = <-doneChan:
-				close(ch)
-			case ch <- poolPop():
+			case <-doneChan:
+				doneVal = true
+			case cardsChan <- poolPop():
 				//	stream out cards as fast as our receiver can take them
 			}
 		}
 	}()
 
-	return ch
+	return cardsChan, doneChan
 }
 
 func ConstructHandFromChars(chars []string) (Cards, error) {
