@@ -33,6 +33,11 @@ func ConstructHand(suits []french.Suit, ranks []french.Rank) (Cards, error) {
 	return Cards(cards), nil
 }
 
+func HandFromString(str string) (Cards, error) {
+	chars := strings.Split(str, "")
+	return ConstructHandFromChars(chars)
+}
+
 func ConstructHandFromChars(chars []string) (Cards, error) {
 	cards := make([]Card, 0, len(chars))
 	for _, char := range chars {
