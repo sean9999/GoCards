@@ -2,56 +2,81 @@ package cards
 
 import "math/rand"
 
-type IGame[DECK_TYPE any] struct {
-	Deck  DECK_TYPE
-	State map[string]any
+type PlayState uint8
+
+const (
+	Unplayed PlayState = iota
+	Playing
+	Played
+)
+
+type Game interface {
+	Results() any
+	Rounds() []Round
+	PlayState() PlayState
+	NewRound(...Player) (Round, error) // if a new round is impossible, returns an error
 }
 
-// a Deck is all the cards that could be played
-type IDeck interface {
+type Player interface {
+	Hand() Cards
+	PlayState() PlayState
+}
+
+// Round is a group of Hands associated with players
+// Every round has a winner or a tie
+type Round interface {
+	Play() (Player, error) // makes every player play. returns the winner
+	Hands() []Hand
+	PlayState() PlayState
+}
+
+// a Deck is all the cards that could be played, representing a full complete deck
+type Deck interface {
 	Shuffle(rand.Source)
-	Valid() (bool, error)
+	DealOut() Stock
 }
 
-// a Stock is all the cards that will be played
-type IStock interface {
-	Shuffle(rand.Source)
-	Valid() (bool, error)
+// Stock is the pile of unplayed cards. It is derived from a deck at the beginning of a game
+type Stock interface {
+	Draw(n int) Cards // Draw from self and return n Cards
+	Cards() []Card
 }
 
-// a Hand can be sorted as poker players do
-type IHand interface {
-	Valid() (bool, error)
-	Less(i, j int) bool
+// a Hand is a set of cards in a player's hand
+type Hand interface {
+	Player() Player
+	Cards() []Card
 }
 
-// Hands ( []Hand ) can be sorted to find the winner and loser
-type IHands interface {
-	Less(i, j int) bool
+// Cards is a group of cards. It could be a pile, a hand, a discard pile, etc
+// it's conceptually similar to a stock, but we require a different set of methods
+// Cards.Beats evaluates groups of cards and decides which is the better hand.
+// It can compare Cards ([]Card) of different lengths
+// ie: does an Ace of Spades beat two threes? Does an Ace of Hearts beat a 5 and a 7?
+type Cards interface {
+	Beats(Cards) bool
+	Cards() []Card
 }
 
 // Card is a playing card
-type ICard interface {
-	Suit() ISuit
-	Face() IFace
-	String() string // ex: 🂮
-	Word() string   // ex: King of Spades
-	Code() string   // ex: K♠
-	Valid() (bool, error)
-	Value() rune
+type Card interface {
+	Suit() Suit
+	Rank() Rank
+	String() string // ie: 🂮
+	//Word() string   // ie: King of Spades
+	//Code() string   // ie: K♠
+	Beats(Card) bool
 }
 
-type ISuit interface {
-	String() string // ex: ♠
-	Value() rune
-	Word() string // ex: "Spades"
+type Suit interface {
+	String() string // ie: ♠
+	//Word() string // ie: "Spades"
+	Beats(Suit) bool
 }
 
-// note that although Face is a rune, it does not correspond to a UTF-8 char
-// because there is no visual representation of a face without a suit
-// rather, it represents on offset from the lowest card in the suit to the highest
-// as such, it could be a byte rather than a rune, but we leave it to avoid casting
-type IFace interface {
-	String() // ex: "King"
-	Code()   // ex: "K"
+// Rank is the face-value of a card, irrespective of it's suit
+type Rank interface {
+	String() string // ex: "King"
+	//Code() string   // ex: "K"
+	Beats(Rank) bool
 }
