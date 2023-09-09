@@ -2,41 +2,75 @@ package easypoker
 
 import (
 	"errors"
-	"fmt"
+	"math/rand"
 
 	french "github.com/sean9999/GoCards/deck/french" // french-suited standard deck
 )
 
 var ErrTooFewCards = errors.New("not enough cards in stock")
 
+type PlayState uint8
+
+const (
+	Unplayed PlayState = iota
+	Playing
+	Played
+)
+
 // Game is a simple game of 5-card poker.
 // No draws. No wild cards. No folding or betting.
 // Players simply play the cards they're dealt, and one of them wins
 // A game ends when the deck is exhausted
 type Game struct {
-	Stock  []french.Card
-	Rounds []Round
+	Stock     Stock
+	Rounds    []Round
+	PlayState PlayState
 }
 
-// Draw from the Stock pile. Usually 5, to give to a player
-func (g *Game) Draw(n int) ([]french.Card, error) {
-	// @todo: error checking if stock is too low
-	if len(g.Stock) < n {
-		return nil, fmt.Errorf("%d in stock, but wanted %d. %w", len(g.Stock), n, ErrTooFewCards)
+// Winner of a game is they who won most rounds
+func (g Game) Winner() *Player {
+	var winner *Player
+	scores := make(map[*Player]int, len(g.Rounds))
+	for _, round := range g.Rounds {
+		scores[round.Winner()]++
 	}
-
-	s := g.Stock
-	chop := len(s) - n
-	tail := s[chop:]
-	g.Stock = s[:chop]
-	return tail, nil
+	highScore := 0
+	for player, score := range scores {
+		if score > highScore {
+			winner = player
+			highScore = score
+		}
+	}
+	return winner
 }
 
-func NewGame(deck french.Deck) Game {
-	stock := make([]french.Card, 0, 52)
+// get a standard 52-card french-suited deck
+// take out the jokers. Easy Poker doesn't use them
+func NewGame(randy rand.Source) Game {
+	deck := french.NewShuffledDeck(randy)
+	stock := make([]Card, 0, 52)
 	for _, card := range deck {
-		if card.Face() != french.Joker {
-			stock = append(stock, card)
+		if card.Rank() != french.Joker {
+			easyCard, _ := CardFromFrench(card)
+			stock = append(stock, easyCard)
+		}
+	}
+	g := Game{
+		Stock:  stock,
+		Rounds: []Round{},
+	}
+	return g
+}
+
+// NewDeterministicGame operates using an unshuffled deck
+// [NewGame] can also be deterministic by passing in a known value as [rand.Source]
+func NewDeterministicGame() Game {
+	deck := french.NewDeck()
+	stock := make([]Card, 0, 52)
+	for _, card := range deck {
+		if card.Rank() != french.Joker {
+			c, _ := CardFromFrench(card)
+			stock = append(stock, c)
 		}
 	}
 	g := Game{

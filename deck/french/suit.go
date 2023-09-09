@@ -13,6 +13,13 @@ type SuitRange struct {
 	UpperBound Card // inclusive
 }
 
+// Floor represents the _exclusive_ lower-bound
+// useful in preventing akward off-by-one errors
+// when combining Suit and Rank values to calculate Card's underlying rune value
+func (sr SuitRange) Floor() Card {
+	return sr.LowerBound - 1
+}
+
 const (
 	ZeroSuit Suit = 0 // should be illegal
 	Diamonds Suit = 0x2666
@@ -31,6 +38,14 @@ func (s Suit) String() string {
 
 func (s Suit) Range() SuitRange {
 	return LegalSuitRanges[s]
+}
+
+func (s Suit) Validate() (bool, error) {
+	_, ok := LegalSuitRanges[s]
+	if !ok {
+		return false, fmt.Errorf("suit %q out of range", s)
+	}
+	return true, nil
 }
 
 func (s Suit) Word() string {
@@ -89,4 +104,8 @@ func GetSuit(c Card) (Suit, error) {
 		}
 	}
 	return ZeroSuit, CardException{c, "no legal suit for this card"}
+}
+
+func (s1 Suit) Beats(s2 Suit) bool {
+	return s1 > s2
 }
