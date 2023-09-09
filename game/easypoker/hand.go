@@ -13,6 +13,11 @@ type Hand struct {
 	Player *Player
 }
 
+func (h Hand) String() string {
+	r := fmt.Sprintf("hand:\t%s\nplayer:\t%s\n", h.Cards.Strand(), h.Player.Name)
+	return r
+}
+
 type Hands []Hand
 
 func ConstructHand(suits []french.Suit, ranks []french.Rank) (Cards, error) {
@@ -62,7 +67,21 @@ func (cs Cards) Strand() string {
 	return r
 }
 
-func Strand(longString string) (Cards, error) {
+func HandFromString(longString string) (Cards, error) {
 	chars := strings.Split(longString, "")
 	return ConstructHandFromChars(chars)
+}
+
+func SortHands(hands []Hand) []Hand {
+	sortedHands := make([]Hand, len(hands))
+	for _, outerHand := range hands {
+		x := 0
+		for _, innerHand := range hands {
+			if outerHand.Beats(innerHand) {
+				x++
+			}
+		}
+		sortedHands[len(hands)-x-1] = outerHand
+	}
+	return sortedHands
 }

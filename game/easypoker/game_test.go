@@ -145,7 +145,7 @@ func TestNewGame(t *testing.T) {
 				} else {
 					losingHand = round.Hands[0]
 				}
-				want, _ := easypoker.Strand("🂥🂲🂳🃑🂴")
+				want, _ := easypoker.HandFromString("🂥🂲🂳🃑🂴")
 				got := losingHand.Cards
 				equal, err := cardsAreEqual(t, got, want)
 				if !equal {
@@ -154,7 +154,7 @@ func TestNewGame(t *testing.T) {
 			})
 
 			t.Run("winning hand is 🂩🃍🃝🂺🂾", func(t *testing.T) {
-				want, err := easypoker.Strand("🂩🃍🃝🂺🂾")
+				want, err := easypoker.HandFromString("🂩🃍🃝🂺🂾")
 				if err != nil {
 					t.Error(err)
 				}
@@ -194,7 +194,7 @@ func TestNewGame(t *testing.T) {
 				} else {
 					losingHand = round.Hands[0]
 				}
-				want, _ := easypoker.Strand(thirdRoundLosingHand)
+				want, _ := easypoker.HandFromString(thirdRoundLosingHand)
 				got := losingHand.Cards
 				equal, err := cardsAreEqual(t, got, want)
 				if !equal {
@@ -204,7 +204,7 @@ func TestNewGame(t *testing.T) {
 
 			thirdRoundWinningHand := "🃈🃗🂦🃄🂪"
 			t.Run("winning hand is "+thirdRoundWinningHand, func(t *testing.T) {
-				want, err := easypoker.Strand(thirdRoundWinningHand)
+				want, err := easypoker.HandFromString(thirdRoundWinningHand)
 				if err != nil {
 					t.Error(err)
 				}

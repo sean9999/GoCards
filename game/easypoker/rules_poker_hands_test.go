@@ -12,7 +12,7 @@ func patternMatchingTest(t *testing.T, handString string, pattern easypoker.Poke
 	t.Helper()
 	t.Run(pattern.Declaration, func(t *testing.T) {
 		t.Helper()
-		hand, _ := easypoker.Strand(handString)
+		hand, _ := easypoker.HandFromString(handString)
 		got, _ := pattern.Func(hand)
 		if want != got {
 			t.Errorf("\"%s %s\" should be a %t statement", handString, pattern.Declaration, want)
@@ -54,7 +54,7 @@ func TestPokerHands(t *testing.T) {
 		patternMatchingTest(t, thisHand, easypoker.IsStraightFlush, false)
 		patternMatchingTest(t, thisHand, easypoker.IsRoyalFlush, false)
 
-		h, _ := easypoker.Strand(thisHand)
+		h, _ := easypoker.HandFromString(thisHand)
 		p := easypoker.HighestPokerHand(h)
 		if p.Grade != easypoker.Flush {
 			t.Errorf("expected %d (Flush) for %s but got %d", easypoker.Flush, thisHand, p.Grade)
@@ -75,7 +75,7 @@ func TestPokerHands(t *testing.T) {
 		patternMatchingTest(t, thisHand, easypoker.HasPair, false)
 		patternMatchingTest(t, thisHand, easypoker.HasTwoPair, false)
 
-		h, _ := easypoker.Strand(thisHand)
+		h, _ := easypoker.HandFromString(thisHand)
 		p := easypoker.HighestPokerHand(h)
 		if p.Grade != easypoker.RoyalFlush {
 			t.Errorf("expected %d (RoyalFlush) for %s but got %d", easypoker.RoyalFlush, thisHand, p.Grade)
@@ -90,7 +90,7 @@ func TestPokerHands(t *testing.T) {
 		patternMatchingTest(t, thisHand, easypoker.IsFlush, false)
 		patternMatchingTest(t, thisHand, easypoker.IsRoyalFlush, false)
 
-		h, _ := easypoker.Strand(thisHand)
+		h, _ := easypoker.HandFromString(thisHand)
 		p := easypoker.HighestPokerHand(h)
 		if p.Grade != easypoker.TwoPair {
 			t.Errorf("expected %d (TwoPair) for %s but got %v", easypoker.TwoPair, thisHand, p)
@@ -99,8 +99,8 @@ func TestPokerHands(t *testing.T) {
 
 	thatHand := "🃕🃂🃃🂡🃄"
 	t.Run(fmt.Sprintf("%s beats %s", thisHand, thatHand), func(t *testing.T) {
-		h1, _ := easypoker.Strand(thisHand)
-		h2, _ := easypoker.Strand(thatHand)
+		h1, _ := easypoker.HandFromString(thisHand)
+		h2, _ := easypoker.HandFromString(thatHand)
 		if !h1.Beats(h2) {
 			t.Errorf("%s should beat %s", thisHand, thatHand)
 		}
@@ -134,7 +134,7 @@ func TestPokerHands(t *testing.T) {
 			"🂶🂷🂸🂹🂺": easypoker.StraightFlush,
 		}
 		for _, thisHand := range inputStrings {
-			h, _ := easypoker.Strand(thisHand)
+			h, _ := easypoker.HandFromString(thisHand)
 			p := easypoker.HighestPokerHand(h)
 			if p.Grade != wantMap[thisHand] {
 				t.Errorf("%s should have PatternGrade %d but got %d", thisHand, wantMap[thisHand], p.Grade)

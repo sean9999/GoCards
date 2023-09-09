@@ -12,6 +12,7 @@ type PatternFunc func(cards Cards) (bool, PokerHand)
 // constants that can be compared to determine what PokerHand beats another
 type PatternGrade uint8
 
+//go:generate stringer -type=PatternGrade
 const (
 	NoGrade PatternGrade = iota
 	HighCard
@@ -39,6 +40,10 @@ type PokerHand struct {
 	Good      Cards
 	Remaining Cards
 	Grade     PatternGrade
+}
+
+func (ph PokerHand) String() string {
+	return fmt.Sprintf("consequentials:\t%s\nleftovers:\t%s\nPoker hand:\t%s", ph.Good.Strand(), ph.Remaining.Strand(), ph.Grade)
 }
 
 func HighestPokerHand(cards Cards) PokerHand {

@@ -30,10 +30,10 @@ func CardFromRune(v rune) Card {
 	return Card(v)
 }
 
-// CardFromFrench takes a french card (a card from the standard french suited deck) and returns the equivalent easypoker card
-// the difference is that that easypoker has rules on what card outranks another (ie: aces high)
+// CardFromFrench takes a french card (a card from the standard french suited deck) and returns the equivalent easypoker card.
+// The difference is that that easypoker has rules on what card outranks another (ie: aces high)
 // or what group of cards (ie: hand) beats another. (ie: full-house beats a pair)
-// or what cards are legal (jokers not permitted)
+// or what cards are legal (jokers are not).
 func CardFromFrench(f french.Card) (Card, error) {
 	if f.Rank() == french.Joker {
 		return ZeroCard, fmt.Errorf("EasyPoker has no Jokers")

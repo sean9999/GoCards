@@ -7,6 +7,7 @@ import (
 
 type Cards []Card
 
+// Cards.Strand shows a group of cards as a sequence of UTF-8 chars
 func (cs Cards) Strand() string {
 	r := ""
 	for _, c := range cs {
@@ -15,11 +16,8 @@ func (cs Cards) Strand() string {
 	return r
 }
 
-func Strand(longString string) (Cards, error) {
-	chars := strings.Split(longString, "")
-	return ConstructHandFromChars(chars)
-}
-
+// StreamCards streams cards on it's returned channel by producing and exausting shuffled decks card by card.
+// You must pass in your done channel and send to it when you want to stop streaming
 func StreamCards(randy rand.Source, doneChan <-chan bool) <-chan Card {
 	//	cards drawn from randomly shuffled decks
 	ch := make(chan Card)
@@ -53,7 +51,14 @@ func StreamCards(randy rand.Source, doneChan <-chan bool) <-chan Card {
 	return ch
 }
 
-func ConstructHandFromChars(chars []string) (Cards, error) {
+// Strand constructs a Cards from a string
+func Strand(longString string) (Cards, error) {
+	chars := strings.Split(longString, "")
+	return ConstructCardsFromChars(chars)
+}
+
+// ConstructCardsFromChars constructs a Cards from a slice of strings
+func ConstructCardsFromChars(chars []string) (Cards, error) {
 	cards := make([]Card, 0, len(chars))
 	for _, char := range chars {
 		if char != " " {

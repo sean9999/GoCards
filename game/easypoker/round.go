@@ -1,6 +1,8 @@
 package easypoker
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // A Round is over as soon as it starts. A hand goes to every player. One of them wins
 type Round struct {
@@ -30,6 +32,10 @@ func (g *Game) NewRound(players ...*Player) (*Round, error) {
 		}
 		hands = append(hands, thisHand)
 	}
+
+	//	sort hands from highest to lowest
+	//	therefore, first hand is winner
+
 	round := Round{
 		Hands:       hands,
 		WinningHand: nil,
@@ -40,6 +46,10 @@ func (g *Game) NewRound(players ...*Player) (*Round, error) {
 
 // plays the round and returns the winning hand
 func (r *Round) Play() Hand {
+
+	//hands := r.Hands
+
+	r.Hands = SortHands(r.Hands)
 	wHand := r.Hands[0]
 	r.WinningHand = &wHand
 	return wHand
