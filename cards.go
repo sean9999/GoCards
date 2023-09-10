@@ -63,20 +63,16 @@ type Card interface {
 	Suit() Suit
 	Rank() Rank
 	String() string // ie: 🂮
-	//Word() string   // ie: King of Spades
-	//Code() string   // ie: K♠
 	Beats(Card) bool
 }
 
 type Suit interface {
 	String() string // ie: ♠
-	//Word() string // ie: "Spades"
 	Beats(Suit) bool
 }
 
 // Rank is the face-value of a card, irrespective of it's suit
 type Rank interface {
 	String() string // ex: "King"
-	//Code() string   // ex: "K"
 	Beats(Rank) bool
 }
