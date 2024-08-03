@@ -29,11 +29,9 @@ func (c Card) Word() string {
 }
 
 func (c Card) FallsWithin() SuitRange {
-	ranges := []SuitRange{SpadesRange, HeartsRange, DiamondsRange, ClubsRange}
-	for _, thisRange := range ranges {
-		return thisRange
-	}
-	return ZeroRange
+	suit, _ := c.Suit()
+	r := LegalSuitRanges[suit]
+	return r
 }
 
 type CardException struct {
@@ -52,19 +50,16 @@ func (c Card) Validate() (bool, error) {
 	}
 	offset := c - suit.Range().Floor()
 	// King is the highest value because that's where it sits in the UTF-8 table.
-	// This is not a judgement on what card is worth more in a particular game
-	// which games implement on their own using [Card.Beats]
-	// This method only determines the card is in the right range of values according to:
-	// https://www.unicode.org/charts/PDF/U1F0A0.pdf
+	// Particular games implement their own [Card.Beats].
+	// see https://www.unicode.org/charts/PDF/U1F0A0.pdf
 	if offset > Card(King) {
 		return false, CardException{c, fmt.Sprintf("invalid face value %q. Highest legal value is %q", offset, King)}
 	}
-	//	happy path
 	return true, nil
 }
 
-func ConstructCard(s Suit, r Rank) Card {
-	val := rune(s.Range().Floor()) + rune(r)
+func MakeCard(rank Rank, suit Suit) Card {
+	val := rune(suit.Range().Floor()) + rune(rank)
 	return Card(val)
 }
 

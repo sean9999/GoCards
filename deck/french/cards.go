@@ -7,6 +7,7 @@ import (
 
 type Cards []Card
 
+// a Strand is a string of cards as UTF8 chars, with spaces in between
 func (cs Cards) Strand() string {
 	r := ""
 	for _, c := range cs {
@@ -24,9 +25,6 @@ func StreamCards(randy rand.Source) (<-chan Card, chan<- bool) {
 	//	cards drawn from randomly shuffled decks
 	cardsChan := make(chan Card)
 	doneChan := make(chan bool)
-
-	//defer close(doneChan)
-	//defer close(cardsChan)
 
 	pool := make([]Card, 0, 54)
 

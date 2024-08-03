@@ -2,6 +2,7 @@ package french
 
 import "fmt"
 
+// a Stock is a pile of Cards
 type Stock []Card
 
 func (p *Stock) Draw(n int) (Cards, error) {

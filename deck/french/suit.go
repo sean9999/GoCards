@@ -1,11 +1,25 @@
 package french
 
 import (
+	"errors"
 	"fmt"
 	"unicode/utf8"
 )
 
+var ErrOutofRange = errors.New("suit out of range")
+
 type Suit rune
+
+const (
+	ZeroSuit Suit = 0 // should be illegal
+	Clubs    Suit = 0x2663
+	Diamonds Suit = 0x2666
+	Hearts   Suit = 0x2665
+	Spades   Suit = 0x2660
+	Black    Suit = 0x1F0CF // Black Joker
+	Red      Suit = 0x1F0BF // Red Joker
+	White    Suit = 0x1F0DF // White Joker
+)
 
 // SuitRange is an _inclusive_ range of values to determine a card's suit
 type SuitRange struct {
@@ -14,28 +28,19 @@ type SuitRange struct {
 }
 
 // Floor represents the _exclusive_ lower-bound
-// useful in preventing akward off-by-one errors
+// useful in preventing off-by-one errors
 // when combining Suit and Rank values to calculate Card's underlying rune value
 func (sr SuitRange) Floor() Card {
 	return sr.LowerBound - 1
 }
 
-const (
-	ZeroSuit Suit = 0 // should be illegal
-	Diamonds Suit = 0x2666
-	Clubs    Suit = 0x2663
-	Hearts   Suit = 0x2665
-	Spades   Suit = 0x2660
-	Black    Suit = 0x1F0CF // Black Joker
-	Red      Suit = 0x1F0BF // Red Joker
-	White    Suit = 0x1F0DF // White Joker
-)
-
+// the UTF8 character representing the suit
 func (s Suit) String() string {
 	buf := utf8.AppendRune(nil, rune(s))
 	return string(buf)
 }
 
+// the range of runes representing all cards in this suit
 func (s Suit) Range() SuitRange {
 	return LegalSuitRanges[s]
 }
@@ -43,11 +48,12 @@ func (s Suit) Range() SuitRange {
 func (s Suit) Validate() (bool, error) {
 	_, ok := LegalSuitRanges[s]
 	if !ok {
-		return false, fmt.Errorf("suit %q out of range", s)
+		return false, fmt.Errorf("%w: %q", ErrOutofRange, s)
 	}
 	return true, nil
 }
 
+// the suit as an english word
 func (s Suit) Word() string {
 	switch s {
 	case Diamonds:
@@ -107,5 +113,14 @@ func GetSuit(c Card) (Suit, error) {
 }
 
 func (s1 Suit) Beats(s2 Suit) bool {
-	return s1 > s2
+
+	s := map[Suit]uint8{
+		ZeroSuit: 0,
+		Clubs:    1,
+		Diamonds: 2,
+		Hearts:   3,
+		Spades:   4,
+	}
+
+	return s[s1] > s[s2]
 }
